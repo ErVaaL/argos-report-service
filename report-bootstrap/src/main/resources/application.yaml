@@ -1,0 +1,25 @@
+argos:
+  resource:
+    grpc:
+      host: localhost
+      port: 9091
+
+logging:
+  level:
+    root: INFO
+    org.springframework.amqp: INFO
+    org.springframework.amqp.rabbit.listener: INFO
+    org.springframework.data.mongodb: WARN
+    io.grpc: WARN
+    com.erval.argos: DEBUG
+
+server:
+  port: 8083
+spring:
+  application:
+    name: report-service
+  mongodb:
+    uri: mongodb://localhost:27017/argos_reports
+  rabbitmq:
+    host: localhost
+    port: 5672
