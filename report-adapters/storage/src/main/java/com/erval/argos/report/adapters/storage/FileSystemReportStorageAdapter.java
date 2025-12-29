@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.erval.argos.report.application.port.in.DownloadReportUseCase;
 import com.erval.argos.report.application.port.out.ReportStoragePort;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,15 @@ public class FileSystemReportStorageAdapter implements ReportStoragePort {
             return target.toAbsolutePath().toString();
         } catch (IOException e) {
             throw new IllegalStateException("Failed to store report: " + jobId, e);
+        }
+    }
+
+    @Override
+    public byte[] load(String artifactPath) {
+        try {
+            return Files.readAllBytes(Path.of(artifactPath));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load report from: " + artifactPath, e);
         }
     }
 

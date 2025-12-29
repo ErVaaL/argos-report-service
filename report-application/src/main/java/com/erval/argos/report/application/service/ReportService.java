@@ -45,11 +45,8 @@ public record ReportService(
         job = repo.save(job);
 
         try {
-            // TODO: later query measurements in [from, to]. For now: last N.
             var measurements = resourceQry.getLastMeasurements(cmd.deviceId(), 100, to);
 
-            // TODO: Currently no Device from grpc, only deviceInfo.
-            // For now generate minimal pdf using only deviceId
             byte[] pdf = pdfGen.generatePdfReport(job, measurements);
 
             String path = storage.store(cmd.jobId(), pdf);
