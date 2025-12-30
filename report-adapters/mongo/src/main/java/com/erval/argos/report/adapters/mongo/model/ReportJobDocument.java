@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public record ReportJobDocument(
         @Id String id,
         String deviceId,
+        String deviceName,
         ReportFormat format,
         ReportStatus status,
         Instant from,
@@ -26,6 +27,7 @@ public record ReportJobDocument(
         return new ReportJobDocument(
                 job.id(),
                 job.deviceId(),
+                job.deviceName(),
                 job.format(),
                 job.status(),
                 job.from(),
@@ -40,6 +42,7 @@ public record ReportJobDocument(
         return new ReportJob(
                 id,
                 deviceId,
+                deviceName,
                 format,
                 status,
                 from,

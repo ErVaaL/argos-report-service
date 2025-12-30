@@ -13,6 +13,7 @@ public interface ResourceQueryPort {
 
     record DeviceInfo(
             String id,
+            String name,
             boolean active,
             boolean found) {
     }

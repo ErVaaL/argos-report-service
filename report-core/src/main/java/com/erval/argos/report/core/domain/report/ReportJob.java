@@ -5,6 +5,7 @@ import java.time.Instant;
 public record ReportJob(
         String id,
         String deviceId,
+        String deviceName,
         ReportFormat format,
         ReportStatus status,
         Instant from,

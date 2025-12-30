@@ -33,6 +33,7 @@ public record ReportService(
         ReportJob job = new ReportJob(
                 cmd.jobId(),
                 cmd.deviceId(),
+                deviceInfo.name(),
                 ReportFormat.PDF,
                 ReportStatus.GENERATING,
                 from,
@@ -54,6 +55,7 @@ public record ReportService(
             ReportJob ready = new ReportJob(
                     job.id(),
                     job.deviceId(),
+                    deviceInfo.name(),
                     job.format(),
                     ReportStatus.READY,
                     job.from(),
@@ -73,6 +75,7 @@ public record ReportService(
             var failed = new ReportJob(
                     job.id(),
                     job.deviceId(),
+                    deviceInfo.name(),
                     job.format(),
                     ReportStatus.FAILED,
                     job.from(),
