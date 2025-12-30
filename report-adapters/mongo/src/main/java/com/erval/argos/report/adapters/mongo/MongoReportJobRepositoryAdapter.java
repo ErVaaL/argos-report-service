@@ -25,7 +25,17 @@ public class MongoReportJobRepositoryAdapter implements ReportJobRepositoryPort 
 
     @Override
     public PageResult<ReportJob> findAll(PageRequest pageRequest) {
-        var pageable = org.springframework.data.domain.PageRequest.of(pageRequest.page(), pageRequest.size());
+        var pageable = org.springframework.data.domain.PageRequest.of(
+                pageRequest.page(),
+                pageRequest.size(),
+                pageRequest.sortBy() == null || pageRequest.sortBy().isBlank()
+                        ? org.springframework.data.domain.Sort.unsorted()
+                        : org.springframework.data.domain.Sort.by(
+                                pageRequest.direction() == null
+                                        ? org.springframework.data.domain.Sort.Direction.DESC
+                                        : org.springframework.data.domain.Sort.Direction.valueOf(
+                                                pageRequest.direction().name()),
+                                pageRequest.sortBy()));
         var page = repo.findAll(pageable);
         var jobs = page.map(ReportJobDocument::toDomain).getContent();
         return new PageResult<>(jobs, page.getTotalElements(), pageRequest.page(), pageRequest.size());
