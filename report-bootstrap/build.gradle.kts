@@ -19,4 +19,6 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 }
