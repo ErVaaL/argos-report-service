@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":services:report-service:report-core"))
+    api(project(":report-core"))
 }

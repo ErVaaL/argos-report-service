@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:report-service:report-application"))
-    implementation(project(":services:report-service:report-core"))
+    implementation(project(":report-application"))
+    implementation(project(":report-core"))
 
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")

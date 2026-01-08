@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:report-service:report-application"))
+    implementation(project(":report-application"))
 
     implementation("org.springframework.boot:spring-boot-starter")
 

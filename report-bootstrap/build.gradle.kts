@@ -3,12 +3,12 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":services:report-service:report-application"))
-    implementation(project(":services:report-service:report-adapters:grpc"))
-    implementation(project(":services:report-service:report-adapters:mongo"))
-    implementation(project(":services:report-service:report-adapters:rabbitmq"))
-    implementation(project(":services:report-service:report-adapters:storage"))
-    implementation(project(":services:report-service:report-adapters:pdf"))
+    implementation(project(":report-application"))
+    implementation(project(":report-adapters:grpc"))
+    implementation(project(":report-adapters:mongo"))
+    implementation(project(":report-adapters:rabbitmq"))
+    implementation(project(":report-adapters:storage"))
+    implementation(project(":report-adapters:pdf"))
 
     implementation("org.springframework.boot:spring-boot-starter-amqp")
 
