@@ -1,0 +1,50 @@
+services:
+  report-mongo:
+    image: mongo:8
+    container_name: argos-report-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - report_mongo_data:/data/db
+    networks: [argos_net]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "mongodb://root:root@localhost:27017/admin",
+          "--eval",
+          "db.runCommand({ ping: 1 }).ok",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  report:
+    image: ghcr.io/ervaal/argos-report-service:main
+    # build:
+    #   context: .
+    #   dockerfile: report-bootstrap/Dockerfile
+    container_name: argos-report
+    environment:
+      SPRING_MONGODB_URI: mongodb://root:root@report-mongo:27017/argos_reports?authSource=admin
+      ARGOS_RESOURCE_GRPC_HOST: resource
+      ARGOS_RESOURCE_GRPC_PORT: 9091
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      ARGOS_REPORT_STORAGE_DIR: /data/reports
+    depends_on:
+      report-mongo:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    networks: [argos_net]
+
+networks:
+  argos_net:
+    external: true
+
+volumes:
+  report_mongo_data:
