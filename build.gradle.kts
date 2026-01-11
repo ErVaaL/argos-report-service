@@ -4,6 +4,9 @@ plugins {
     id("org.springframework.boot") version "4.0.0" apply false
 }
 
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
 fun loadDotenv(path: String = ".env"): Map<String, String> {
     val file = file(path)
     if (!file.exists()) return emptyMap()
@@ -69,3 +72,44 @@ subprojects {
     }
 }
 
+val coverageProjects = setOf(
+    ":report-application",
+    ":report-adapters:grpc",
+    ":report-adapters:mongo",
+    ":report-adapters:rabbitmq",
+    ":report-adapters:pdf",
+    ":report-adapters:storage",
+)
+
+subprojects {
+    if (path in coverageProjects) {
+        apply(plugin = "jacoco")
+
+        tasks.withType<Test>().configureEach {
+            finalizedBy("jacocoTestReport")
+        }
+
+        tasks.named<JacocoReport>("jacocoTestReport") {
+            dependsOn("test")
+            reports {
+                xml.required.set(true)
+                html.required.set(true)
+            }
+        }
+
+        tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+            dependsOn("test")
+            violationRules {
+                rule {
+                    limit {
+                        minimum = "0.70".toBigDecimal()
+                    }
+                }
+            }
+        }
+
+        tasks.named("check") {
+            dependsOn("jacocoTestCoverageVerification")
+        }
+    }
+}
