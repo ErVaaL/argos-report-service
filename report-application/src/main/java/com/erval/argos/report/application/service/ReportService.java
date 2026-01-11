@@ -12,6 +12,16 @@ import com.erval.argos.report.core.domain.report.ReportFormat;
 import com.erval.argos.report.core.domain.report.ReportJob;
 import com.erval.argos.report.core.domain.report.ReportStatus;
 
+/**
+ * Application service that generates report artifacts and updates job status.
+ * <p>
+ * Responsibilities:
+ * <ul>
+ * <li>validating target devices via the resource query port</li>
+ * <li>generating PDFs and storing artifacts</li>
+ * <li>publishing report events on success or failure</li>
+ * </ul>
+ */
 public record ReportService(
         ReportJobRepositoryPort repo,
         ResourceQueryPort resourceQry,
@@ -19,6 +29,13 @@ public record ReportService(
         ReportStoragePort storage,
         ReportEventPublisherPort publisher) implements GenerateReportUseCase {
 
+    /**
+     * Generates a report for a job request and persists updates.
+     *
+     * @param cmd command containing job id, device id, and time range
+     * @return final job state (READY or FAILED)
+     * @throws IllegalArgumentException when the device is missing or inactive
+     */
     @Override
     public ReportJob generate(GenerateReportCommand cmd) {
         var deviceInfo = resourceQry.getDevice(cmd.deviceId());

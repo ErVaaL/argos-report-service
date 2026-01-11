@@ -13,16 +13,31 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * MongoDB-backed adapter for report job persistence.
+ */
 @Component
 @RequiredArgsConstructor
 public class MongoReportJobRepositoryAdapter implements ReportJobRepositoryPort {
     private final ReportJobMongoRepository repo;
 
+    /**
+     * Finds a report job by id.
+     *
+     * @param jobId report job identifier
+     * @return optional job
+     */
     @Override
     public Optional<ReportJob> findById(String jobId) {
         return repo.findById(jobId).map(ReportJobDocument::toDomain);
     }
 
+    /**
+     * Lists report jobs using pagination settings.
+     *
+     * @param pageRequest paging and sorting settings
+     * @return page of report jobs
+     */
     @Override
     public PageResult<ReportJob> findAll(PageRequest pageRequest) {
         var pageable = org.springframework.data.domain.PageRequest.of(
@@ -40,6 +55,13 @@ public class MongoReportJobRepositoryAdapter implements ReportJobRepositoryPort 
         var jobs = page.map(ReportJobDocument::toDomain).getContent();
         return new PageResult<>(jobs, page.getTotalElements(), pageRequest.page(), pageRequest.size());
     }
+
+    /**
+     * Saves a report job aggregate.
+     *
+     * @param reportJob report job to persist
+     * @return saved job
+     */
     @Override
     public ReportJob save(ReportJob reportJob) {
         return repo.save(ReportJobDocument.fromDomain(reportJob)).toDomain();

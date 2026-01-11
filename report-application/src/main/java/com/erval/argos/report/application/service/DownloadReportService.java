@@ -5,10 +5,21 @@ import com.erval.argos.report.application.port.out.ReportJobRepositoryPort;
 import com.erval.argos.report.application.port.out.ReportStoragePort;
 import com.erval.argos.report.core.domain.report.ReportStatus;
 
+/**
+ * Application service for downloading stored report artifacts.
+ */
 public record DownloadReportService(
         ReportJobRepositoryPort repo,
         ReportStoragePort storage) implements DownloadReportUseCase {
 
+    /**
+     * Loads a report artifact for a completed job.
+     *
+     * @param query download query with job id
+     * @return downloadable report payload
+     * @throws IllegalArgumentException when the job is missing
+     * @throws IllegalStateException when the job is not ready or has no artifact
+     */
     @Override
     public Result download(Query query) {
         var job = repo.findById(query.jobId())

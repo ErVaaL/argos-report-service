@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * RabbitMQ publisher for report lifecycle events.
+ */
 @Component
 @RequiredArgsConstructor
 public class RabbitReportEventPublisherAdapter implements ReportEventPublisherPort {
@@ -20,6 +23,12 @@ public class RabbitReportEventPublisherAdapter implements ReportEventPublisherPo
     private static final String RK_GENERATED = "report.generated.v1";
     private static final String RK_FAILED = "report.failed.v1";
 
+    /**
+     * Publishes a report failed event.
+     *
+     * @param jobId  report job identifier
+     * @param reason failure reason
+     */
     @Override
     public void reportFailed(String jobId, String reason) {
         rabbit.convertAndSend(EXCHANGE, RK_FAILED, Map.of(
@@ -27,6 +36,12 @@ public class RabbitReportEventPublisherAdapter implements ReportEventPublisherPo
                 "reason", reason));
     }
 
+    /**
+     * Publishes a report generated event.
+     *
+     * @param jobId report job identifier
+     * @param pdfUrl URL or path to the generated report
+     */
     @Override
     public void reportGenerated(String jobId, String pdfUrl) {
         rabbit.convertAndSend(EXCHANGE, RK_GENERATED,

@@ -12,11 +12,20 @@ import com.erval.argos.report.core.domain.snapshot.MeasurementType;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * gRPC adapter that queries resource service for device data and measurements.
+ */
 @RequiredArgsConstructor
 public class GrpcResourceQueryAdapter implements ResourceQueryPort {
 
     private final ResourceQueryServiceGrpc.ResourceQueryServiceBlockingStub stub;
 
+    /**
+     * Fetches device metadata by id.
+     *
+     * @param deviceId device identifier
+     * @return device info and found flag
+     */
     @Override
     public DeviceInfo getDevice(String deviceId) {
         var res = stub.getDevice(GetDeviceRequest.newBuilder().setDeviceId(deviceId).build());
@@ -28,6 +37,14 @@ public class GrpcResourceQueryAdapter implements ResourceQueryPort {
         return new DeviceInfo(d.getId(), d.getName(), d.getActive(), true);
     }
 
+    /**
+     * Fetches recent measurements for a device.
+     *
+     * @param deviceId device identifier
+     * @param limit    max number of measurements
+     * @param to       upper bound timestamp
+     * @return measurement snapshots
+     */
     @Override
     public List<MeasurementSnapshot> getLastMeasurements(String deviceId, int limit, Instant to) {
         var req = GetLastMeasurementsRequest.newBuilder()
@@ -50,6 +67,12 @@ public class GrpcResourceQueryAdapter implements ResourceQueryPort {
                 .toList();
     }
 
+    /**
+     * Maps raw measurement type values to the local enum.
+     *
+     * @param raw raw measurement type value
+     * @return mapped measurement type
+     */
     private MeasurementType mapType(String raw) {
         if (raw == null || raw.isBlank())
             return null;

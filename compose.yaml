@@ -22,22 +22,49 @@ services:
       timeout: 3s
       retries: 20
 
+  report-keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    container_name: argos-report-keycloak
+    command: ["start-dev"]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    networks: [argos_net]
+
+  report-rabbitmq:
+    image: rabbitmq:4.2.2-management
+    container_name: argos-report-rabbitmq
+    ports:
+      - "15672:15672"
+    networks: [argos_net]
+
   report:
-    image: ghcr.io/ervaal/argos-report-service:main
-    # build:
-    #   context: .
-    #   dockerfile: report-bootstrap/Dockerfile
+    # image: ghcr.io/ervaal/argos-report-service:main
+    build:
+      context: .
+      dockerfile: report-bootstrap/Dockerfile
+      secrets:
+        - source: gh_user
+        - source: gh_token
     container_name: argos-report
     environment:
       SPRING_MONGODB_URI: mongodb://root:root@report-mongo:27017/argos_reports?authSource=admin
       ARGOS_RESOURCE_GRPC_HOST: resource
       ARGOS_RESOURCE_GRPC_PORT: 9091
-      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_HOST: report-rabbitmq
       SPRING_RABBITMQ_PORT: 5672
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://report-keycloak:8080/realms/master
       ARGOS_REPORT_STORAGE_DIR: /data/reports
     depends_on:
       report-mongo:
         condition: service_healthy
+      report-keycloak:
+        condition: service_started
+      report-rabbitmq:
+        condition: service_started
     ports:
       - "8083:8083"
     networks: [argos_net]
@@ -48,3 +75,9 @@ networks:
 
 volumes:
   report_mongo_data:
+
+secrets:
+  gh_user:
+    environment: GH_USER
+  gh_token:
+    environment: GH_TOKEN

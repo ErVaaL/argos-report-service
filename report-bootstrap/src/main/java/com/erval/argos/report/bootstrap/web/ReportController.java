@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * REST controller exposing report retrieval and listing endpoints.
+ */
 @RestController
 @RequiredArgsConstructor
 public class ReportController {

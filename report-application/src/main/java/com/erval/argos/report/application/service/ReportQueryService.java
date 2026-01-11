@@ -10,10 +10,19 @@ import com.erval.argos.report.core.domain.PageRequest;
 import com.erval.argos.report.core.domain.PageResult;
 import com.erval.argos.report.core.domain.report.ReportJob;
 
+/**
+ * Application service for listing report jobs and refreshing device names.
+ */
 public record ReportQueryService(
         ReportJobRepositoryPort repo,
         ResourceQueryPort resourceQuery) implements QueryReportJobsUseCase {
 
+    /**
+     * Lists report jobs, filling missing device names from the resource service.
+     *
+     * @param pageRequest paging and sorting settings
+     * @return page of report jobs
+     */
     @Override
     public PageResult<ReportJob> listReportJobs(PageRequest pageRequest) {
         var page = repo.findAll(pageRequest);
